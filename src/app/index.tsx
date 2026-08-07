@@ -5,89 +5,74 @@ import {
   KeyboardAvoidingView,
   Platform,
   Pressable,
-  StyleSheet,
   TextInput,
+  useColorScheme,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
-import { MaxContentWidth, Spacing } from '@/constants/theme';
-import { useTheme } from '@/hooks/use-theme';
-import { supabase } from '@/lib/supabase';
+import { ThemedSelect } from '@/components/themed-select';
+import { messages } from '@/constants/messages';
 
-function translateAuthError(message: string): string {
-  if (message.includes('already registered') || message.includes('already been registered')) {
-    return 'Este email ya está registrado.';
-  }
-  if (message.includes('Password should be at least')) {
-    return 'La contraseña debe tener al menos 6 caracteres.';
-  }
-  if (message.includes('Unable to validate email address')) {
-    return 'El formato del email no es válido.';
-  }
-  if (message.includes('Email rate limit exceeded')) {
-    return 'Demasiados intentos. Esperá unos minutos e intentá de nuevo.';
-  }
-  return message;
+const m = messages.RegisterPage;
+
+function getCountryOptions() {
+  return [
+    { label: 'Colombia', value: 'CO' },
+    { label: 'USA', value: 'US' },
+  ];
 }
 
+
 export default function RegisterScreen() {
-  const theme = useTheme();
+  const colorScheme = useColorScheme();
+  const placeholderColor = colorScheme === 'dark' ? '#B0B4BA' : '#60646C';
+
   const [fullName, setFullName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [countryCode, setCountryCode] = useState('CO');
+  
+
   const [loading, setLoading] = useState(false);
 
   async function handleRegister() {
     if (!fullName || !email || !password) {
-      Alert.alert('Campos requeridos', 'Por favor completá todos los campos.');
+      Alert.alert(m.errorRequiredTitle, m.errorRequiredMessage);
       return;
     }
     if (password.length < 6) {
-      Alert.alert('Contraseña muy corta', 'La contraseña debe tener al menos 6 caracteres.');
+      Alert.alert(m.errorPasswordShortTitle, m.errorPasswordShortMessage);
       return;
     }
 
     setLoading(true);
-    const { error } = await supabase.auth.signUp({
-      email,
-      password,
-      options: {
-        data: { full_name: fullName },
-      },
-    });
     setLoading(false);
-
-    if (error) {
-      Alert.alert('Error al registrarse', translateAuthError(error.message));
-      return;
-    }
-
-    Alert.alert('¡Registro exitoso!', 'Revisá tu email para confirmar tu cuenta.');
   }
 
   return (
-    <ThemedView style={styles.container}>
-      <SafeAreaView style={styles.safeArea}>
+    <ThemedView className="flex-1 flex-row justify-center">
+      <SafeAreaView style={{ flex: 1, paddingHorizontal: 24, maxWidth: 800, alignSelf: 'center', width: '100%' }}>
         <KeyboardAvoidingView
           behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-          style={styles.keyboardView}>
-          <ThemedText type="subtitle" style={styles.title}>
-            Crear cuenta
+          className="flex-1 justify-center gap-2">
+
+          <ThemedText type="subtitle" className="mb-1">
+            {m.createAccountLabel}
           </ThemedText>
-          <ThemedText type="small" themeColor="textSecondary" style={styles.subtitle}>
-            Ingresá tus datos para registrarte
+          <ThemedText type="small" themeColor="textSecondary" className="mb-6">
+            {m.subtitleLabel}
           </ThemedText>
 
-          <ThemedView style={styles.form}>
-            <ThemedView style={styles.field}>
-              <ThemedText type="smallBold">Nombre completo</ThemedText>
-              <ThemedView type="backgroundElement" style={styles.inputWrapper}>
+          <ThemedView className="gap-4">
+            <ThemedView className="gap-2">
+              <ThemedText type="smallBold">{m.fullNameLabel}</ThemedText>
+              <ThemedView type="backgroundElement" className="rounded-lg px-4 h-12 justify-center">
                 <TextInput
-                  style={[styles.input, { color: theme.text }]}
-                  placeholder="Juan Pérez"
-                  placeholderTextColor={theme.textSecondary}
+                  className="text-app-text dark:text-app-dark-text text-base leading-6 font-medium"
+                  placeholder={m.fullNamePlaceholder}
+                  placeholderTextColor={placeholderColor}
                   value={fullName}
                   onChangeText={setFullName}
                   autoCapitalize="words"
@@ -97,13 +82,13 @@ export default function RegisterScreen() {
               </ThemedView>
             </ThemedView>
 
-            <ThemedView style={styles.field}>
-              <ThemedText type="smallBold">Email</ThemedText>
-              <ThemedView type="backgroundElement" style={styles.inputWrapper}>
+            <ThemedView className="gap-2">
+              <ThemedText type="smallBold">{m.emailLabel}</ThemedText>
+              <ThemedView type="backgroundElement" className="rounded-lg px-4 h-12 justify-center">
                 <TextInput
-                  style={[styles.input, { color: theme.text }]}
-                  placeholder="juan@email.com"
-                  placeholderTextColor={theme.textSecondary}
+                  className="text-app-text dark:text-app-dark-text text-base leading-6 font-medium"
+                  placeholder={m.emailPlaceholder}
+                  placeholderTextColor={placeholderColor}
                   value={email}
                   onChangeText={setEmail}
                   keyboardType="email-address"
@@ -114,13 +99,13 @@ export default function RegisterScreen() {
               </ThemedView>
             </ThemedView>
 
-            <ThemedView style={styles.field}>
-              <ThemedText type="smallBold">Contraseña</ThemedText>
-              <ThemedView type="backgroundElement" style={styles.inputWrapper}>
+            <ThemedView className="gap-2">
+              <ThemedText type="smallBold">{m.passwordLabel}</ThemedText>
+              <ThemedView type="backgroundElement" className="rounded-lg px-4 h-12 justify-center">
                 <TextInput
-                  style={[styles.input, { color: theme.text }]}
-                  placeholder="••••••••"
-                  placeholderTextColor={theme.textSecondary}
+                  className="text-app-text dark:text-app-dark-text text-base leading-6 font-medium"
+                  placeholder={m.passwordPlaceholder}
+                  placeholderTextColor={placeholderColor}
                   value={password}
                   onChangeText={setPassword}
                   secureTextEntry
@@ -131,85 +116,29 @@ export default function RegisterScreen() {
               </ThemedView>
             </ThemedView>
 
+            <ThemedView className="gap-2">
+              <ThemedText type="smallBold">{m.countryLabel}</ThemedText>
+              <ThemedView type="backgroundElement" className="rounded-lg px-4 h-12 justify-center">
+                <ThemedSelect options={getCountryOptions()} value={countryCode} onChange={setCountryCode} />
+              </ThemedView>
+            </ThemedView>
+
             <Pressable
-              style={({ pressed }) => [
-                styles.button,
-                (pressed || loading) && styles.buttonPressed,
-              ]}
+              className={`bg-[#3c87f7] rounded-lg h-12 items-center justify-center mt-1 active:opacity-80 ${loading ? 'opacity-80' : ''}`}
               onPress={handleRegister}
               disabled={loading}>
               {loading ? (
                 <ActivityIndicator color="#ffffff" />
               ) : (
-                <ThemedText type="smallBold" style={styles.buttonText}>
-                  Registrarse
+                <ThemedText type="smallBold" style={{ color: '#ffffff' }}>
+                  {m.registerButtonLabel}
                 </ThemedText>
               )}
             </Pressable>
           </ThemedView>
+
         </KeyboardAvoidingView>
       </SafeAreaView>
     </ThemedView>
   );
 }
-
-
-const styles = StyleSheet.create({
-    container: {
-    flex: 1,
-    justifyContent: 'center',
-    flexDirection: 'row',
-  },
-  safeArea :{
-    flex: 1,
-    paddingHorizontal: Spacing.four,
-    maxWidth: MaxContentWidth,
-    alignSelf: 'center',
-    width: '100%',
-  },
-  keyboardView: {
-    flex: 1,
-    justifyContent: 'center',
-    gap: Spacing.two,
-  },
-  title: {
-    marginBottom: Spacing.one,
-  },
-  subtitle: {
-    marginBottom: Spacing.four,
-  },
-  form: {
-    gap: Spacing.three,
-  },
-  field:{
-    gap: Spacing.two,
-  },
-  inputWrapper: {
-    borderRadius: Spacing.two,
-    paddingHorizontal: Spacing.three,
-    height: 48,
-    justifyContent: 'center',
-  },
-  input: {
-    fontSize: 16,
-    lineHeight: 24,
-    fontWeight: 500,
-  },
-
-  button: {
-    backgroundColor: '#3c87f7',
-    borderRadius: Spacing.two,
-    height: 48,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginTop: Spacing.one,
-  },
-  buttonPressed: {
-    opacity: 0.8,
-  },
-  buttonText: {
-    color: '#ffffff',
-  }
-})
-
-
