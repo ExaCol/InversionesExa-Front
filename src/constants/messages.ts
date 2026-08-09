@@ -1,4 +1,25 @@
 export const messages = {
+  LoginPage: {
+    titleLabel: 'Bienvenido',
+    subtitleLabel: 'Ingresá tu email y contraseña para continuar',
+
+    emailLabel: 'Email',
+    emailPlaceholder: 'juan@email.com',
+
+    passwordLabel: 'Contraseña',
+    passwordPlaceholder: '••••••••',
+
+    loginButtonLabel: 'Iniciar sesión',
+
+    errorRequiredTitle: 'Campos requeridos',
+    errorRequiredMessage: 'Por favor completá todos los campos.',
+
+    errorInvalidCredentials: 'Email o contraseña incorrectos.',
+    errorRateLimit: 'Demasiados intentos. Esperá unos minutos e intentá de nuevo.',
+
+    noAccountLabel: '¿No tenés cuenta?',
+    registerLinkLabel: 'Registrate',
+  },
   RegisterPage: {
     createAccountLabel: 'Crear cuenta',
     subtitleLabel: 'Ingresá tus datos para registrarte',

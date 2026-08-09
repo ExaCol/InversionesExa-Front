@@ -14,6 +14,30 @@ interface RegisterResponse {
   expiresIn: number;
 }
 
+interface LoginPayload {
+  email: string;
+  password: string;
+}
+
+type LoginResponse = RegisterResponse;
+
+export async function login(data: LoginPayload): Promise<LoginResponse> {
+  const res = await fetch(`${BASE_URL}/auth/login`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(data),
+  });
+
+  if (!res.ok) {
+    const error = await res.json().catch(() => null);
+    throw new Error(error?.message || "Error al iniciar sesión");
+  }
+
+  return res.json();
+}
+
 export async function register(
   data: RegisterPayload,
 ): Promise<RegisterResponse> {
@@ -35,5 +59,6 @@ export async function register(
 }
 
 export const authApi = {
+  login,
   register,
 };
