@@ -1,5 +1,5 @@
-import * as SecureStore from "expo-secure-store";
 import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
+import * as SecureStore from "@/lib/secure-storage";
 
 interface AuthTokens {
   accessToken: string;
