@@ -22,7 +22,7 @@ Cuando esté corriendo se puede ver la aplicación web desde localhost:8081. Sin
 npx expo run:android
 ```
 
-Una vez utilice este comando puede durar hasta 20 minutos en configurarse el build de la aplicativo por primera vez, el resto de veces toma aproximadamente 10 segundos.
+Una vez utilice este comando puede durar hasta 20 minutos en configurarse el build de la aplicativo por primera vez, el resto de veces toma aproximadamente 10 segundos. Cuando se realice este proceso tener en cuenta que puede consumir bastante memoria RAM, por lo que se recomienda cerrar aplicaciones innecesarias a la hora de ejecutar el comando.
 
 Recomendación: No funcionara la aplicación si tienen el puerto 8081 bloqueado o alguna VPN como ZeroTier activa, por lo que es recomendable tener esto en cuenta antes de ejecutar la aplicación DESDE DISPOSITIVOS ANDROID
 
