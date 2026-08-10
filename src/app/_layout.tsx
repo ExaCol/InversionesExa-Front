@@ -5,6 +5,8 @@ import * as SplashScreen from 'expo-splash-screen';
 import { useEffect } from 'react';
 import { Platform, useColorScheme } from 'react-native';
 
+import { AuthProvider } from '@/context/auth-context';
+
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
@@ -23,5 +25,9 @@ export default function RootLayout() {
     }
   }, [colorScheme]);
 
-  return <Stack screenOptions={{ headerShown: false }} />;
+  return (
+    <AuthProvider>
+      <Stack screenOptions={{ headerShown: false }} />
+    </AuthProvider>
+  );
 }

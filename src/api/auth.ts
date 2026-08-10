@@ -19,6 +19,10 @@ interface LoginPayload {
   password: string;
 }
 
+interface LoginWithGooglePayload {
+  idToken: string;
+}
+
 type LoginResponse = RegisterResponse;
 
 export async function login(data: LoginPayload): Promise<LoginResponse> {
@@ -41,7 +45,6 @@ export async function login(data: LoginPayload): Promise<LoginResponse> {
 export async function register(
   data: RegisterPayload,
 ): Promise<RegisterResponse> {
-  console.log(BASE_URL);
   const res = await fetch(`${BASE_URL}/auth/register`, {
     method: "POST",
     headers: {
@@ -58,7 +61,27 @@ export async function register(
   return res.json();
 }
 
+export async function loginWithGoogle(
+  data: LoginWithGooglePayload,
+): Promise<LoginResponse> {
+  const res = await fetch(`${BASE_URL}/auth/oauth/google`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(data),
+  });
+
+  if (!res.ok) {
+    const error = await res.json().catch(() => null);
+    throw new Error(error?.message || "Error al iniciar sesión con Google");
+  }
+
+  return res.json();
+}
+
 export const authApi = {
   login,
   register,
+  loginWithGoogle,
 };

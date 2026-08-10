@@ -15,6 +15,8 @@ import { FormField } from "@/components/form-field";
 import { ThemedText } from "@/components/themed-text";
 import { ThemedView } from "@/components/themed-view";
 import { messages } from "@/constants/messages";
+import { useAuth } from "@/context/auth-context";
+import { useGoogleAuth } from "@/hooks/use-google-auth";
 
 const m = messages.LoginPage;
 
@@ -22,6 +24,9 @@ export default function LoginScreen() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const [googleLoading, setGoogleLoading] = useState(false);
+
+  const { signIn } = useAuth();
 
   async function handleLogin() {
     if (!email || !password) {
@@ -31,7 +36,8 @@ export default function LoginScreen() {
 
     setLoading(true);
     try {
-      await authApi.login({ email, password });
+      const tokens = await authApi.login({ email, password });
+      await signIn(tokens);
       router.replace("/(app)/home");
     } catch (err) {
       const message = err instanceof Error ? err.message : m.errorInvalidCredentials;
@@ -39,6 +45,22 @@ export default function LoginScreen() {
     }
     setLoading(false);
   }
+
+  async function handleGoogleLoginSuccess(idToken: string) {
+    setGoogleLoading(true);
+    try {
+      const tokens = await authApi.loginWithGoogle({ idToken });
+      await signIn(tokens);
+      router.replace("/(app)/home");
+    } catch (err) {
+      const message =
+        err instanceof Error ? err.message : "Error al iniciar sesión con Google";
+      Alert.alert("Error", message);
+    }
+    setGoogleLoading(false);
+  }
+
+  const { request, promptAsync } = useGoogleAuth(handleGoogleLoginSuccess);
 
   return (
     <ThemedView className="flex-1 flex-row justify-center">
@@ -96,6 +118,18 @@ export default function LoginScreen() {
                 <ThemedText type="smallBold" style={{ color: "#ffffff" }}>
                   {m.loginButtonLabel}
                 </ThemedText>
+              )}
+            </Pressable>
+
+            <Pressable
+              className={`border border-gray-300 rounded-lg h-12 items-center justify-center mt-1 active:opacity-80 ${googleLoading ? "opacity-80" : ""}`}
+              onPress={() => promptAsync()}
+              disabled={!request || googleLoading || loading}
+            >
+              {googleLoading ? (
+                <ActivityIndicator color="#3c87f7" />
+              ) : (
+                <ThemedText type="smallBold">Continuar con Google</ThemedText>
               )}
             </Pressable>
 
