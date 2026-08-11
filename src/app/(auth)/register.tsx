@@ -1,15 +1,10 @@
 import { router } from "expo-router";
 import { useState } from "react";
-import {
-  ActivityIndicator,
-  Alert,
-  KeyboardAvoidingView,
-  Platform,
-  Pressable,
-} from "react-native";
+import { Alert, KeyboardAvoidingView, Platform } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { authApi } from "@/api/auth";
+import { Button } from "@/components/button";
 import { FormField } from "@/components/form-field";
 import { ThemedSelect } from "@/components/themed-select";
 import { ThemedText } from "@/components/themed-text";
@@ -131,19 +126,12 @@ export default function RegisterScreen() {
               </ThemedView>
             </ThemedView>
 
-            <Pressable
-              className={`bg-[#3c87f7] rounded-lg h-12 items-center justify-center mt-1 active:opacity-80 ${loading ? "opacity-80" : ""}`}
+            <Button
+              className="mt-1"
+              label={m.registerButtonLabel}
               onPress={handleRegister}
-              disabled={loading}
-            >
-              {loading ? (
-                <ActivityIndicator color="#ffffff" />
-              ) : (
-                <ThemedText type="smallBold" style={{ color: "#ffffff" }}>
-                  {m.registerButtonLabel}
-                </ThemedText>
-              )}
-            </Pressable>
+              loading={loading}
+            />
           </ThemedView>
         </KeyboardAvoidingView>
       </SafeAreaView>

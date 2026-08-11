@@ -1,53 +1,56 @@
 export const messages = {
   LoginPage: {
-    titleLabel: 'Bienvenido',
-    subtitleLabel: 'Ingresá tu email y contraseña para continuar',
+    titleLabel: "Bienvenido",
+    subtitleLabel: "Ingresa tu email y contraseña para continuar",
 
-    emailLabel: 'Email',
-    emailPlaceholder: 'juan@email.com',
+    emailLabel: "Email",
+    emailPlaceholder: "juan@email.com",
 
-    passwordLabel: 'Contraseña',
-    passwordPlaceholder: '••••••••',
+    passwordLabel: "Contraseña",
+    passwordPlaceholder: "••••••••",
 
-    loginButtonLabel: 'Iniciar sesión',
+    loginButtonLabel: "Iniciar sesión",
 
-    errorRequiredTitle: 'Campos requeridos',
-    errorRequiredMessage: 'Por favor completá todos los campos.',
+    errorRequiredTitle: "Campos requeridos",
+    errorRequiredMessage: "Por favor completa todos los campos.",
 
-    errorInvalidCredentials: 'Email o contraseña incorrectos.',
-    errorRateLimit: 'Demasiados intentos. Esperá unos minutos e intentá de nuevo.',
+    errorInvalidCredentials: "Email o contraseña incorrectos.",
+    errorRateLimit:
+      "Demasiados intentos. Espera unos minutos e intenta de nuevo.",
 
-    noAccountLabel: '¿No tenés cuenta?',
-    registerLinkLabel: 'Registrate',
+    noAccountLabel: "¿No tienes cuenta?",
+    registerLinkLabel: "Registrate",
   },
   RegisterPage: {
-    createAccountLabel: 'Crear cuenta',
-    subtitleLabel: 'Ingresá tus datos para registrarte',
+    createAccountLabel: "Crear cuenta",
+    subtitleLabel: "Ingresa tus datos para registrarte",
 
-    fullNameLabel: 'Nombre completo',
-    fullNamePlaceholder: 'Juan Pérez',
+    fullNameLabel: "Nombre completo",
+    fullNamePlaceholder: "Juan Pérez",
 
-    emailLabel: 'Email',
-    emailPlaceholder: 'juan@email.com',
+    emailLabel: "Email",
+    emailPlaceholder: "juan@email.com",
 
-    passwordLabel: 'Contraseña',
-    passwordPlaceholder: '••••••••',
+    passwordLabel: "Contraseña",
+    passwordPlaceholder: "••••••••",
 
-    countryLabel: 'País',
+    countryLabel: "País",
 
-    registerButtonLabel: 'Registrarse',
+    registerButtonLabel: "Registrarse",
 
-    errorRequiredTitle: 'Campos requeridos',
-    errorRequiredMessage: 'Por favor completá todos los campos.',
+    errorRequiredTitle: "Campos requeridos",
+    errorRequiredMessage: "Por favor completa todos los campos.",
 
-    errorPasswordShortTitle: 'Contraseña muy corta',
-    errorPasswordShortMessage: 'La contraseña debe tener al menos 6 caracteres.',
+    errorPasswordShortTitle: "Contraseña muy corta",
+    errorPasswordShortMessage:
+      "La contraseña debe tener al menos 6 caracteres.",
 
-    errorAlreadyRegistered: 'Este email ya está registrado.',
-    errorInvalidEmail: 'El formato del email no es válido.',
-    errorRateLimit: 'Demasiados intentos. Esperá unos minutos e intentá de nuevo.',
+    errorAlreadyRegistered: "Este email ya está registrado.",
+    errorInvalidEmail: "El formato del email no es válido.",
+    errorRateLimit:
+      "Demasiados intentos. Espera unos minutos e intenta de nuevo.",
 
-    successTitle: '¡Registro exitoso!',
-    successMessage: 'Revisá tu email para confirmar tu cuenta.',
+    successTitle: "¡Registro exitoso!",
+    successMessage: "Revisá tu email para confirmar tu cuenta.",
   },
 } as const;

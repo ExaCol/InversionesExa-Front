@@ -1,16 +1,10 @@
 import { Link, router } from "expo-router";
 import { useState } from "react";
-import {
-  ActivityIndicator,
-  Alert,
-  KeyboardAvoidingView,
-  Platform,
-  Pressable,
-  View,
-} from "react-native";
+import { Alert, KeyboardAvoidingView, Platform, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { authApi } from "@/api/auth";
+import { Button } from "@/components/button";
 import { FormField } from "@/components/form-field";
 import { ThemedText } from "@/components/themed-text";
 import { ThemedView } from "@/components/themed-view";
@@ -107,31 +101,21 @@ export default function LoginScreen() {
               editable={!loading}
             />
 
-            <Pressable
-              className={`bg-[#3c87f7] rounded-lg h-12 items-center justify-center mt-1 active:opacity-80 ${loading ? "opacity-80" : ""}`}
+            <Button
+              className="mt-1"
+              label={m.loginButtonLabel}
               onPress={handleLogin}
-              disabled={loading}
-            >
-              {loading ? (
-                <ActivityIndicator color="#ffffff" />
-              ) : (
-                <ThemedText type="smallBold" style={{ color: "#ffffff" }}>
-                  {m.loginButtonLabel}
-                </ThemedText>
-              )}
-            </Pressable>
+              loading={loading}
+            />
 
-            <Pressable
-              className={`border border-gray-300 rounded-lg h-12 items-center justify-center mt-1 active:opacity-80 ${googleLoading ? "opacity-80" : ""}`}
+            <Button
+              className="mt-1"
+              variant="outline"
+              label="Continuar con Google"
               onPress={() => promptAsync()}
-              disabled={!request || googleLoading || loading}
-            >
-              {googleLoading ? (
-                <ActivityIndicator color="#3c87f7" />
-              ) : (
-                <ThemedText type="smallBold">Continuar con Google</ThemedText>
-              )}
-            </Pressable>
+              loading={googleLoading}
+              disabled={!request || loading}
+            />
 
             <View className="flex-row justify-center gap-1 mt-2">
               <ThemedText type="small" themeColor="textSecondary">
