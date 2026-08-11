@@ -1,8 +1,19 @@
-import { ActivityIndicator, Pressable, type PressableProps } from "react-native";
+import { useUnstableNativeVariable } from "nativewind";
+import {
+  ActivityIndicator,
+  Platform,
+  Pressable,
+  type PressableProps,
+} from "react-native";
 
 import { ThemedText } from "@/components/themed-text";
 
-export type ButtonVariant = "primary" | "secondary" | "success" | "danger" | "outline";
+export type ButtonVariant =
+  | "primary"
+  | "secondary"
+  | "success"
+  | "danger"
+  | "outline";
 
 export type ButtonProps = Omit<PressableProps, "children"> & {
   label: string;
@@ -16,24 +27,30 @@ const containerClasses: Record<ButtonVariant, string> = {
   secondary: "bg-red",
   success: "bg-blue",
   danger: "bg-vanilla",
-  outline: "bg-transparent border border-app-selected dark:border-app-dark-selected",
+  outline:
+    "bg-transparent border border-app-selected dark:border-app-dark-selected",
 };
 
-const spinnerColor: Record<ButtonVariant, string> = {
-  primary: "#ffffff",
-  secondary: "#ffffff",
-  success: "#ffffff",
-  danger: "#ffffff",
-  outline: "#3c87f7",
+const labelClasses: Record<ButtonVariant, string> = {
+  primary: "text-white",
+  secondary: "text-white",
+  success: "text-white",
+  danger: "text-white",
+  outline: "",
 };
 
-const labelStyle: Record<ButtonVariant, { color: string } | undefined> = {
-  primary: { color: "#ffffff" },
-  secondary: { color: "#ffffff" },
-  success: { color: "#ffffff" },
-  danger: { color: "#ffffff" },
-  outline: undefined,
+const spinnerVariable: Record<ButtonVariant, `--${string}`> = {
+  primary: "--color-white",
+  secondary: "--color-white",
+  success: "--color-white",
+  danger: "--color-white",
+  outline: "--color-yellow",
 };
+
+function useCssVariableColor(name: `--${string}`) {
+  const nativeValue = useUnstableNativeVariable(name);
+  return Platform.OS === "web" ? `var(${name})` : nativeValue;
+}
 
 export function Button({
   label,
@@ -43,16 +60,18 @@ export function Button({
   className,
   ...rest
 }: ButtonProps) {
+  const spinnerColor = useCssVariableColor(spinnerVariable[variant]);
+
   return (
     <Pressable
-      className={`rounded-lg h-12 items-center justify-center active:opacity-80 ${containerClasses[variant]} ${loading ? "opacity-80" : ""} ${className ?? ""}`.trim()}
+      className={`rounded-lg h-12 items-center justify-center transition-transform duration-100 ease-out hover:scale-105 active:opacity-80 ${containerClasses[variant]} ${loading ? "opacity-80" : ""} ${className ?? ""}`.trim()}
       disabled={disabled || loading}
       {...rest}
     >
       {loading ? (
-        <ActivityIndicator color={spinnerColor[variant]} />
+        <ActivityIndicator color={spinnerColor} />
       ) : (
-        <ThemedText type="smallBold" style={labelStyle[variant]}>
+        <ThemedText type="smallBold" className={labelClasses[variant]}>
           {label}
         </ThemedText>
       )}

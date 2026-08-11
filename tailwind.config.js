@@ -24,6 +24,7 @@ module.exports = {
         red: 'var(--color-red)',
         blue: 'var(--color-blue)',
         vanilla: 'var(--color-vanilla)',
+        white: 'var(--color-white)',
       },
     },
   },
