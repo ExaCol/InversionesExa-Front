@@ -1,5 +1,22 @@
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as SecureStore from "expo-secure-store";
+import { Platform } from "react-native";
 import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
+
+const storage = {
+  getItem: (key: string) =>
+    Platform.OS === "web"
+      ? AsyncStorage.getItem(key)
+      : SecureStore.getItemAsync(key),
+  setItem: (key: string, value: string) =>
+    Platform.OS === "web"
+      ? AsyncStorage.setItem(key, value)
+      : SecureStore.setItemAsync(key, value),
+  deleteItem: (key: string) =>
+    Platform.OS === "web"
+      ? AsyncStorage.removeItem(key)
+      : SecureStore.deleteItemAsync(key),
+};
 
 interface AuthTokens {
   accessToken: string;
@@ -21,7 +38,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     async function loadStoredToken() {
-      const storedToken = await SecureStore.getItemAsync("accessToken");
+      const storedToken = await storage.getItem("accessToken");
       if (storedToken) {
         setAccessToken(storedToken);
       }
@@ -31,14 +48,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   async function signIn(tokens: AuthTokens) {
-    await SecureStore.setItemAsync("accessToken", tokens.accessToken);
-    await SecureStore.setItemAsync("refreshToken", tokens.refreshToken);
+    await storage.setItem("accessToken", tokens.accessToken);
+    await storage.setItem("refreshToken", tokens.refreshToken);
     setAccessToken(tokens.accessToken);
   }
 
   async function signOut() {
-    await SecureStore.deleteItemAsync("accessToken");
-    await SecureStore.deleteItemAsync("refreshToken");
+    await storage.deleteItem("accessToken");
+    await storage.deleteItem("refreshToken");
     setAccessToken(null);
   }
 

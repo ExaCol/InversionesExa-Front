@@ -40,7 +40,8 @@ export default function LoginScreen() {
       await signIn(tokens);
       router.replace("/(app)/home");
     } catch (err) {
-      const message = err instanceof Error ? err.message : m.errorInvalidCredentials;
+      const message =
+        err instanceof Error ? err.message : m.errorInvalidCredentials;
       Alert.alert("Error", message);
     }
     setLoading(false);
@@ -54,7 +55,9 @@ export default function LoginScreen() {
       router.replace("/(app)/home");
     } catch (err) {
       const message =
-        err instanceof Error ? err.message : "Error al iniciar sesión con Google";
+        err instanceof Error
+          ? err.message
+          : "Error al iniciar sesión con Google";
       Alert.alert("Error", message);
     }
     setGoogleLoading(false);
