@@ -11,6 +11,7 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { authApi } from "@/api/auth";
+import { userApi } from "@/api/user";
 import { FormField } from "@/components/form-field";
 import { ThemedText } from "@/components/themed-text";
 import { ThemedView } from "@/components/themed-view";
@@ -28,6 +29,11 @@ export default function LoginScreen() {
 
   const { signIn } = useAuth();
 
+  async function continueAfterAuth(accessToken: string) {
+    const hasCountry = await userApi.getCountryStatus(accessToken);
+    router.replace(hasCountry ? "/(app)/home" : "/(app)/select-country");
+  }
+
   async function handleLogin() {
     if (!email || !password) {
       Alert.alert(m.errorRequiredTitle, m.errorRequiredMessage);
@@ -38,7 +44,7 @@ export default function LoginScreen() {
     try {
       const tokens = await authApi.login({ email, password });
       await signIn(tokens);
-      router.replace("/(app)/home");
+      await continueAfterAuth(tokens.accessToken);
     } catch (err) {
       const message =
         err instanceof Error ? err.message : m.errorInvalidCredentials;
@@ -52,7 +58,7 @@ export default function LoginScreen() {
     try {
       const tokens = await authApi.loginWithGoogle({ idToken });
       await signIn(tokens);
-      router.replace("/(app)/home");
+      await continueAfterAuth(tokens.accessToken);
     } catch (err) {
       const message =
         err instanceof Error
@@ -104,7 +110,7 @@ export default function LoginScreen() {
               placeholder={m.passwordPlaceholder}
               value={password}
               onChangeText={setPassword}
-              secureTextEntry
+              isPassword
               autoCapitalize="none"
               autoCorrect={false}
               editable={!loading}

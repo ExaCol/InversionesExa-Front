@@ -23,6 +23,11 @@ interface LoginWithGooglePayload {
   idToken: string;
 }
 
+export interface CountryDto {
+  country_code: string;
+  name: string;
+}
+
 type LoginResponse = RegisterResponse;
 
 export async function login(data: LoginPayload): Promise<LoginResponse> {
@@ -80,8 +85,20 @@ export async function loginWithGoogle(
   return res.json();
 }
 
+export async function getCountries(): Promise<CountryDto[]> {
+  const res = await fetch(`${BASE_URL}/auth/countries`);
+
+  if (!res.ok) {
+    const error = await res.json().catch(() => null);
+    throw new Error(error?.message || "Error al obtener los países");
+  }
+
+  return res.json();
+}
+
 export const authApi = {
   login,
   register,
   loginWithGoogle,
+  getCountries,
 };

@@ -1,5 +1,5 @@
 import { router } from "expo-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   ActivityIndicator,
   Alert,
@@ -9,40 +9,54 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-import { authApi } from "@/api/auth";
+import { authApi, type CountryDto } from "@/api/auth";
+import { CountrySelect } from "@/components/country-select";
 import { FormField } from "@/components/form-field";
-import { ThemedSelect } from "@/components/themed-select";
 import { ThemedText } from "@/components/themed-text";
 import { ThemedView } from "@/components/themed-view";
 import { messages } from "@/constants/messages";
+import { useAuth } from "@/context/auth-context";
 
 const m = messages.RegisterPage;
+const common = messages.Common;
 
-function getCountryOptions() {
-  return [
-    { label: "Colombia", value: "CO" },
-    { label: "USA", value: "US" },
-  ];
-}
+const STRONG_PASSWORD_REGEX = /^(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).{8,}$/;
 
 export default function RegisterScreen() {
-
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [countryCode, setCountryCode] = useState("CO");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [countryCode, setCountryCode] = useState("");
 
+  const [countries, setCountries] = useState<CountryDto[]>([]);
+  const [loadingCountries, setLoadingCountries] = useState(true);
   const [loading, setLoading] = useState(false);
 
+  const { signIn } = useAuth();
+
+  useEffect(() => {
+    authApi
+      .getCountries()
+      .then(setCountries)
+      .catch(() => Alert.alert("Error", common.errorLoadCountries))
+      .finally(() => setLoadingCountries(false));
+  }, []);
+
   async function handleRegister() {
-    if (!fullName || !email || !password || !countryCode) {
+    if (!fullName || !email || !password || !confirmPassword || !countryCode) {
       Alert.alert(m.errorRequiredTitle, m.errorRequiredMessage);
       return;
     }
-    if (password.length < 6) {
+    if (!STRONG_PASSWORD_REGEX.test(password)) {
       Alert.alert(m.errorPasswordShortTitle, m.errorPasswordShortMessage);
       return;
     }
+    if (password !== confirmPassword) {
+      Alert.alert(m.errorPasswordMismatchTitle, m.errorPasswordMismatchMessage);
+      return;
+    }
+
     const data = {
       fullName: fullName,
       email: email,
@@ -52,7 +66,8 @@ export default function RegisterScreen() {
 
     setLoading(true);
     try {
-      await authApi.register(data);
+      const tokens = await authApi.register(data);
+      await signIn(tokens);
       router.replace("/(app)/home");
     } catch (err) {
       const message = err instanceof Error ? err.message : m.errorAlreadyRegistered;
@@ -106,12 +121,28 @@ export default function RegisterScreen() {
               editable={!loading}
             />
 
+            <ThemedView className="gap-2">
+              <FormField
+                label={m.passwordLabel}
+                placeholder={m.passwordPlaceholder}
+                value={password}
+                onChangeText={setPassword}
+                isPassword
+                autoCapitalize="none"
+                autoCorrect={false}
+                editable={!loading}
+              />
+              <ThemedText type="small" themeColor="textSecondary">
+                {m.passwordHintLabel}
+              </ThemedText>
+            </ThemedView>
+
             <FormField
-              label={m.passwordLabel}
-              placeholder={m.passwordPlaceholder}
-              value={password}
-              onChangeText={setPassword}
-              secureTextEntry
+              label={m.confirmPasswordLabel}
+              placeholder={m.confirmPasswordPlaceholder}
+              value={confirmPassword}
+              onChangeText={setConfirmPassword}
+              isPassword
               autoCapitalize="none"
               autoCorrect={false}
               editable={!loading}
@@ -119,16 +150,19 @@ export default function RegisterScreen() {
 
             <ThemedView className="gap-2">
               <ThemedText type="smallBold">{m.countryLabel}</ThemedText>
-              <ThemedView
-                type="backgroundElement"
-                className="rounded-lg px-4 h-12 justify-center"
-              >
-                <ThemedSelect
-                  options={getCountryOptions()}
+              {loadingCountries ? (
+                <ActivityIndicator />
+              ) : (
+                <CountrySelect
+                  countries={countries}
                   value={countryCode}
                   onChange={setCountryCode}
+                  placeholder={common.countrySelectPlaceholder}
+                  searchPlaceholder={common.countrySearchPlaceholder}
+                  emptyLabel={common.countryEmptyLabel}
+                  disabled={loading}
                 />
-              </ThemedView>
+              )}
             </ThemedView>
 
             <Pressable
