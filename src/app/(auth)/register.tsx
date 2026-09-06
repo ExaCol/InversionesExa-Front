@@ -68,7 +68,7 @@ export default function RegisterScreen() {
     try {
       const tokens = await authApi.register(data);
       await signIn(tokens);
-      router.replace("/(app)/home");
+      router.replace("/(app)/(tabs)/home");
     } catch (err) {
       const message = err instanceof Error ? err.message : m.errorAlreadyRegistered;
       Alert.alert("Error", message);

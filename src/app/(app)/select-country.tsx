@@ -39,7 +39,7 @@ export default function SelectCountryScreen() {
     setSaving(true);
     try {
       await userApi.updateCountry(accessToken, countryCode);
-      router.replace("/(app)/home");
+      router.replace("/(app)/(tabs)/home");
     } catch (err) {
       const message = err instanceof Error ? err.message : m.errorSaveCountry;
       Alert.alert("Error", message);

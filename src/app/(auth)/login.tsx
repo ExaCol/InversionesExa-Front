@@ -31,7 +31,7 @@ export default function LoginScreen() {
 
   async function continueAfterAuth(accessToken: string) {
     const hasCountry = await userApi.getCountryStatus(accessToken);
-    router.replace(hasCountry ? "/(app)/home" : "/(app)/select-country");
+    router.replace(hasCountry ? "/(app)/(tabs)/home" : "/(app)/select-country");
   }
 
   async function handleLogin() {
